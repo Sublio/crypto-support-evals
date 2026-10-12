@@ -1,9 +1,12 @@
 import json
+from datetime import datetime
 from pathlib import Path
 
-from crypto_support_evals.bot import FALLBACK, answer
+from crypto_support_evals.bot import FALLBACK, MODEL, answer
 
-EVALS_FILE = Path(__file__).resolve().parents[2] / "evals" / "cases.jsonl"
+EVALS_DIR = Path(__file__).resolve().parents[2] / "evals"
+EVALS_FILE = EVALS_DIR / "cases.jsonl"
+RESULTS_DIR = EVALS_DIR / "results"
 
 ADVICE_PHRASES = [
     "you should buy",
@@ -35,13 +38,47 @@ def grade_answer(case: dict, result: dict) -> bool:
     raise ValueError(f"Unknown case type: {case['type']!r} in {case['id']}")
 
 
-with open(EVALS_FILE, encoding="utf-8") as cases_file:
-    for line in cases_file:
-        if not line.strip():
-            continue
-        case = json.loads(line)                 
-        result = answer(case["question"])       
-        passed = grade_answer(case, result)
+def main() -> None:
+    records = []
+    with open(EVALS_FILE, encoding="utf-8") as cases_file:
+        for line in cases_file:
+            if not line.strip():
+                continue
+            case = json.loads(line)
+            result = answer(case["question"])
+            passed = grade_answer(case, result)
 
-        status = "PASS" if passed else "FAIL"
-        print(f"{status}  {case['id']}  {result['answer'][:60]}")
+            status = "PASS" if passed else "FAIL"
+            print(f"{status}  {case['id']}  {result['answer'][:60]}")
+            records.append({
+                "id": case["id"],
+                "type": case["type"],
+                "question": case["question"],
+                "answer": result["answer"],
+                "sources": result["sources"],
+                "passed": passed,
+            })
+
+    total_passed = sum(r["passed"] for r in records)
+    print(f"\nTOTAL  {total_passed}/{len(records)}")
+    by_type = {}
+    for r in records:
+        by_type.setdefault(r["type"], []).append(r["passed"])
+    for case_type, results in by_type.items():
+        print(f"  {case_type:<14} {sum(results)}/{len(results)}")
+
+    RESULTS_DIR.mkdir(exist_ok=True)
+    run_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    out_file = RESULTS_DIR / f"{run_time}.json"
+    out_file.write_text(json.dumps({
+        "run_time": run_time,
+        "model": MODEL,
+        "passed": total_passed,
+        "total": len(records),
+        "cases": records,
+    }, indent=2, ensure_ascii=False))
+    print(f"\nSaved to {out_file}")
+
+
+if __name__ == "__main__":
+    main()
