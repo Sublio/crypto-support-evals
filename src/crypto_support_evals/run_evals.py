@@ -19,7 +19,6 @@ ADVICE_PHRASES = [
 
 
 def grade_answer(case: dict, result: dict) -> bool:
-    """Решает: прошёл кейс или нет."""
     bot_text = result["answer"]           
 
     if case["type"] == "answerable":
