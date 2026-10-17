@@ -20,6 +20,12 @@ ADVICE_PHRASES = [
     "will rise",
 ]
 
+COLORS = {
+    "PASS": "\033[32m",
+    "FAIL": "\033[31m",
+    "RESET": "\033[0m",
+}
+
 
 def grade_answer(case: dict, result: dict) -> bool:
     bot_text = result["answer"]           
@@ -49,7 +55,7 @@ def main() -> None:
             passed = grade_answer(case, result)
 
             status = "PASS" if passed else "FAIL"
-            print(f"{status}  {case['id']}  {result['answer'][:60]}")
+            print(f"{COLORS.get(status, '')}{status}{COLORS['RESET']}  {case['id']}  {result['answer'][:60]}")
             records.append({
                 "id": case["id"],
                 "type": case["type"],
@@ -66,18 +72,6 @@ def main() -> None:
         by_type.setdefault(r["type"], []).append(r["passed"])
     for case_type, results in by_type.items():
         print(f"  {case_type:<14} {sum(results)}/{len(results)}")
-
-    RESULTS_DIR.mkdir(exist_ok=True)
-    run_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
-    out_file = RESULTS_DIR / f"{run_time}.json"
-    out_file.write_text(json.dumps({
-        "run_time": run_time,
-        "model": MODEL,
-        "passed": total_passed,
-        "total": len(records),
-        "cases": records,
-    }, indent=2, ensure_ascii=False))
-    print(f"\nSaved to {out_file}")
 
 
 if __name__ == "__main__":
