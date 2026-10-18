@@ -9,5 +9,23 @@ wheels/
 # Virtual environments
 .venv
 .env
-.deepeval/
+.env.*
 
+# Tool caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+htmlcov/
+
+# Eval frameworks (local run caches; saved runs live in evals/results/)
+.deepeval/
+.promptfoo/
+
+# Editors and IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS files
+.DS_Store
