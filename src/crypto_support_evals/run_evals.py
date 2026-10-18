@@ -73,6 +73,18 @@ def main() -> None:
     for case_type, results in by_type.items():
         print(f"  {case_type:<14} {sum(results)}/{len(results)}")
 
+    RESULTS_DIR.mkdir(exist_ok=True)
+    run_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    out_file = RESULTS_DIR / f"{run_time}.json"
+    out_file.write_text(json.dumps({
+        "run_time": run_time,
+        "model": MODEL,
+        "passed": total_passed,
+        "total": len(records),
+        "cases": records,
+    }, indent=2, ensure_ascii=False))
+    print(f"\nSaved to {out_file}")
+
 
 if __name__ == "__main__":
     main()
