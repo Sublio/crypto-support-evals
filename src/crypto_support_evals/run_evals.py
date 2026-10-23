@@ -62,6 +62,7 @@ def main() -> None:
                 "question": case["question"],
                 "answer": result["answer"],
                 "sources": result["sources"],
+                "grounded": result["grounded"],
                 "passed": passed,
             })
 

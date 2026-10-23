@@ -19,6 +19,14 @@ Rules:
 - Never give investment, financial or tax advice, even if asked directly.
 - Keep answers short and factual."""
 
+# Share of an answer's content words that must appear in the retrieved context.
+# Real answers score 0.7+, off-topic ones (jokes, role-play) score near 0.
+GROUNDED_THRESHOLD = 0.5
+
+STOPWORDS = set("""a an the and or but of to in on at for with by from is are was were be been it
+this that these those you your i we our can cannot not no do does did will would should may might
+has have had as if so than then there here what which who how when why""".split())
+
 
 def load_chunks(docs_dir: Path = DOCS_DIR) -> list[dict]:
     """Split every .md file into one chunk per '## ' section.
@@ -50,8 +58,20 @@ def build_prompt(question: str, contexts: list[dict]) -> str:
     return f"CONTEXT:\n{context_text}\n\nQUESTION: {question}"
 
 
+def is_grounded(answer_text: str, contexts: list[dict]) -> bool:
+    """True if enough of the answer's content words appear in the retrieved context."""
+    if answer_text == FALLBACK:
+        return True
+    context_words = set(tokenize(" ".join(c["text"] for c in contexts)))
+    words = [w for w in tokenize(answer_text) if w not in STOPWORDS]
+    if not words:
+        return False
+    return sum(w in context_words for w in words) / len(words) >= GROUNDED_THRESHOLD
+
+
 def answer(question: str, k: int = 3) -> dict:
-    """Returns {"answer": str, "contexts": [str], "sources": [str]}"""
+    """Returns {"answer": str, "grounded": bool, "contexts": [str], "sources": [str]}
+    An answer that isn't grounded in the context is replaced with FALLBACK."""
     contexts = retrieve(question, load_chunks(), k=k)
     response = ollama.chat(
         model=MODEL,
@@ -61,8 +81,11 @@ def answer(question: str, k: int = 3) -> dict:
         ],
         options={"temperature": 0},
     )
+    text = response["message"]["content"].strip()
+    grounded = is_grounded(text, contexts)
     return {
-        "answer": response["message"]["content"].strip(),
+        "answer": text if grounded else FALLBACK,
+        "grounded": grounded,
         "contexts": [c["text"] for c in contexts],
         "sources": [c["source"] for c in contexts],
     }
