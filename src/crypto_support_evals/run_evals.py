@@ -86,6 +86,9 @@ def main() -> None:
     }, indent=2, ensure_ascii=False))
     print(f"\nSaved to {out_file}")
 
+    if total_passed < len(records):
+        raise SystemExit(1)
+
 
 if __name__ == "__main__":
     main()

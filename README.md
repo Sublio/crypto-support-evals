@@ -1,5 +1,7 @@
 # crypto-support-evals
 
+[![Evals](https://github.com/Sublio/crypto-support-evals/actions/workflows/evals.yml/badge.svg?branch=master)](https://github.com/Sublio/crypto-support-evals/actions/workflows/evals.yml)
+
 RAG support bot for the fictional "Orbitra Exchange" (BM25 retrieval over `docs/*.md` + `gemma2:2b` via Ollama), plus an eval harness for it.
 
 ## Setup

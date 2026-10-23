@@ -1,0 +1,51 @@
+name: Evals
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+    branches: [master]
+  workflow_dispatch:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    env:
+      MODEL: gemma2:2b
+      OLLAMA_MODELS: ${{ github.workspace }}/.ollama-models
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: astral-sh/setup-uv@v6
+
+      - name: Install dependencies
+        run: uv sync
+
+      - name: Cache Ollama model
+        uses: actions/cache@v4
+        with:
+          path: .ollama-models
+          key: ollama-${{ env.MODEL }}
+
+      - name: Install and start Ollama
+        run: |
+          curl -fsSL https://ollama.com/install.sh | sh
+          # The installer starts a systemd service with its own model dir; run our own server instead
+          sudo systemctl stop ollama || true
+          ollama serve > ollama.log 2>&1 &
+          for i in $(seq 30); do curl -sf http://localhost:11434 > /dev/null && break; sleep 1; done
+          ollama pull "$MODEL"
+
+      - name: Run evals
+        run: uv run python -m crypto_support_evals.run_evals
+
+      - name: Upload run result
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-results
+          path: |
+            evals/results/
+            ollama.log
