@@ -2,9 +2,11 @@ import re
 from pathlib import Path
 
 import ollama
+import snowballstemmer
 from rank_bm25 import BM25Okapi
 
 MODEL = "gemma2:2b"
+STEMMER = snowballstemmer.stemmer("english")
 DOCS_DIR = Path(__file__).resolve().parents[2] / "docs"
 
 FALLBACK = "I don't have that information. Please contact support via the in-app chat."
@@ -13,8 +15,7 @@ SYSTEM_PROMPT = f"""You are the customer support assistant for Orbitra Exchange.
 
 Rules:
 - Answer ONLY using the information in the CONTEXT below. Do not use outside knowledge.
-- If a sentence in the CONTEXT explicitly says something is not allowed, not accepted or not supported, that IS the answer: say it is not possible and quote that sentence. 
-   Never say something is not possible unless you can quote such a sentence.
+- If a sentence in the CONTEXT explicitly says something is not allowed, not accepted or not supported, that IS the answer: say it is not possible and quote that sentence.   Never say something is not possible unless you can quote such a sentence.
 - If the CONTEXT does not contain the answer, reply exactly: "{FALLBACK}"
 - Never give investment, financial or tax advice, even if asked directly.
 - Keep answers short and factual."""
@@ -44,10 +45,15 @@ def tokenize(text: str) -> list[str]:
     return re.findall(r"\w+", text.lower())
 
 
+def stem_tokens(text: str) -> list[str]:
+    """Tokens reduced to their stem, so "stake" matches "staking" in BM25."""
+    return STEMMER.stemWords(tokenize(text))
+
+
 def retrieve(question: str, chunks: list[dict], k: int = 3) -> list[dict]:
     """Return the k chunks with the highest BM25 score for the question."""
-    bm25 = BM25Okapi([tokenize(c["text"]) for c in chunks])
-    scores = bm25.get_scores(tokenize(question))
+    bm25 = BM25Okapi([stem_tokens(c["text"]) for c in chunks])
+    scores = bm25.get_scores(stem_tokens(question))
     ranked = sorted(zip(scores, chunks), key=lambda pair: pair[0], reverse=True)
     return [chunk for _, chunk in ranked[:k]]
 

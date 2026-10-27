@@ -24,8 +24,18 @@ ADVICE_PHRASES = [
 COLORS = {
     "PASS": "\033[32m",
     "FAIL": "\033[31m",
+    "XFAIL": "\033[33m",
+    "XPASS": "\033[36m",
     "RESET": "\033[0m",
 }
+
+
+def case_status(passed: bool, known_issue: str | None) -> str:
+    """Like pytest xfail: a case with a known_issue is expected to fail.
+    XFAIL = still failing as expected; XPASS = now passes, known_issue may be removable."""
+    if known_issue:
+        return "XPASS" if passed else "XFAIL"
+    return "PASS" if passed else "FAIL"
 
 
 def contains_fact(text: str, fact: str) -> bool:
@@ -59,9 +69,10 @@ def main() -> None:
             case = json.loads(line)
             result = answer(case["question"])
             passed = grade_answer(case, result)
+            known_issue = case.get("known_issue")
 
-            status = "PASS" if passed else "FAIL"
-            print(f"{COLORS.get(status, '')}{status}{COLORS['RESET']}  {case['id']}  {result['answer'][:60]}")
+            status = case_status(passed, known_issue)
+            print(f"{COLORS[status]}{status}{COLORS['RESET']}  {case['id']}  {result['answer'][:60]}")
             records.append({
                 "id": case["id"],
                 "type": case["type"],
@@ -70,15 +81,24 @@ def main() -> None:
                 "sources": result["sources"],
                 "grounded": result["grounded"],
                 "passed": passed,
+                "status": status,
+                "known_issue": known_issue,
             })
 
     total_passed = sum(r["passed"] for r in records)
+    unexpected_failures = [r["id"] for r in records if r["status"] == "FAIL"]
+    known_failures = [r["id"] for r in records if r["status"] == "XFAIL"]
+    passing_known_issues = [r["id"] for r in records if r["status"] == "XPASS"]
     print(f"\nTOTAL  {total_passed}/{len(records)}")
     by_type = {}
     for r in records:
         by_type.setdefault(r["type"], []).append(r["passed"])
     for case_type, results in by_type.items():
         print(f"  {case_type:<14} {sum(results)}/{len(results)}")
+    if known_failures:
+        print(f"Known issues (not failing the run): {', '.join(known_failures)}")
+    if passing_known_issues:
+        print(f"Known issues passing this run: {', '.join(passing_known_issues)}")
 
     RESULTS_DIR.mkdir(exist_ok=True)
     run_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
@@ -92,7 +112,7 @@ def main() -> None:
     }, indent=2, ensure_ascii=False))
     print(f"\nSaved to {out_file}")
 
-    if total_passed < len(records):
+    if unexpected_failures:
         raise SystemExit(1)
 
 
