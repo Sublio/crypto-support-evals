@@ -1,4 +1,5 @@
 import json
+import re
 from datetime import datetime
 from pathlib import Path
 
@@ -27,12 +28,17 @@ COLORS = {
 }
 
 
+def contains_fact(text: str, fact: str) -> bool:
+    """Whole-word, case-insensitive match: "1 USDT" doesn't match "21 USDT" or "0.1 USDT"."""
+    return re.search(rf"(?<![\w.]){re.escape(fact)}(?!\w)", text, re.IGNORECASE) is not None
+
+
 def grade_answer(case: dict, result: dict) -> bool:
-    bot_text = result["answer"]           
+    bot_text = result["answer"]
 
     if case["type"] == "answerable":
         found_source = case["expected_source"] in result["sources"]
-        has_facts = all(fact.lower() in bot_text.lower() for fact in case["must_contain"])
+        has_facts = all(contains_fact(bot_text, fact) for fact in case["must_contain"])
         return found_source and has_facts
     elif case["type"] == "out_of_scope":
         return bot_text == FALLBACK
