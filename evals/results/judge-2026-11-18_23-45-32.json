@@ -1,0 +1,106 @@
+[
+  {
+    "id": "fee-01",
+    "answer": "BTC can be bought, sold and traded on Orbitra, but BTC cannot be deposited to or withdrawn from Orbitra on-chain.",
+    "relevancy": 0.6666666666666666,
+    "relevancy_reason": "The score is 0.67 because the output partially addresses the question but includes an irrelevant statement that BTC can be bought, sold, and traded, which does not answer the withdrawal fee query and lowers the score; the response would score higher if it focused directly on stating the BTC withdrawal fee.",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output aligns with the retrieval context. Great work keeping the response fully faithful to the source material!"
+  },
+  {
+    "id": "wd-01",
+    "answer": "1 USDT",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because there are no irrelevant statements in the actual output, so every part of the response directly addresses the question about the fee to withdraw USDT on TRON. Great job staying fully on target!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "wd-02",
+    "answer": "0.1 SOL",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because every statement in the actual output directly addresses the input question about the minimum SOL withdrawal, with no irrelevant content to lower the score. Great work staying focused on exactly what was asked!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "wd-03",
+    "answer": "A first withdrawal to a new address is held for 24 hours as a security measure.",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because every statement in the actual output stays directly on topic, and there were no irrelevant statements to lower it. Great job staying focused on the user's question about why the withdrawal hasn't been processed after adding a new wallet address!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "fee-02",
+    "answer": "0.20%",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because there are no irrelevant statements in the actual output, so every part of the response directly addresses the question about the taker fee on the Standard tier. Great work staying fully on-topic!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found between the actual output and the retrieval context, so every claim in the response is faithful to the provided source material. Great job staying fully grounded in the retrieved information!"
+  },
+  {
+    "id": "fee-03",
+    "answer": "3.5% of the purchase amount.",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because every statement in the actual output stays directly on topic, with no irrelevant content to lower it. Great work keeping the answer focused on the question of what it costs to buy crypto with a credit card!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "kyc-01",
+    "answer": "Residence permits are not accepted for Level 1 verification.",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because the actual output contains no irrelevant statements, so every part of the response directly addresses whether a residence permit can be used for Level 1 verification. Great job staying focused on the question!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "kyc-02",
+    "answer": "Most verifications are completed in about 10 minutes. If your application needs manual review, it can take up to 3 business days.",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because the actual output contains no irrelevant statements and fully addresses the question about how long identity verification takes. Great job staying focused on the input!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning the actual output aligns fully with the retrieval context. Great work staying faithful to the source material!"
+  },
+  {
+    "id": "sec-01",
+    "answer": "48 hours after resetting your password.",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because every statement in the actual output stays on topic and directly addresses the user's question about when they can withdraw again, with no irrelevant content to lower it. Great work keeping the response focused!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "sec-02",
+    "answer": "It is not legit. Orbitra will never call you and ask for your 2FA code.  Orbitra does not offer phone support and will never call you.",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because there are no irrelevant statements in the actual output, so every part of the response directly addresses the user's question about whether the call asking for a 2FA code from Orbitra is legitimate. Great work staying fully on-topic!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "pol-01",
+    "answer": "An inactive account is charged a 5 USDT inactivity fee per month, deducted from the account balance.",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because there are no irrelevant statements in the actual output, so every part of the response directly addresses the question about what happens if you don't log in for two years. Great job staying fully on topic!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great work keeping the response grounded and accurate!"
+  },
+  {
+    "id": "ch-01",
+    "answer": "Staking is not supported.  \nQuote: \"Staking is not supported.\"",
+    "relevancy": 1.0,
+    "relevancy_reason": "The score is 1.00 because there are no irrelevant statements in the actual output, so every part of the response directly addresses the question about staking SOL on Orbitra. Great work staying focused on what was asked!",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because no contradictions were found, meaning every claim in the actual output is fully supported by the retrieval context. Great job staying faithful to the source material!"
+  },
+  {
+    "id": "oos-02",
+    "answer": "Not possible. \"Orbitra does not offer phone support and will never call you.\"",
+    "relevancy": 0.3333333333333333,
+    "relevancy_reason": "The score is 0.33 because the output includes statements about phone support and Orbitra never calling customers, which do not address whether futures trading with leverage is offered, so most of the response strays from the user's question. The score is not higher because these irrelevant statements dilute the answer, and only a small part of the output is relevant to the question asked.",
+    "faithfulness": 1.0,
+    "faithfulness_reason": "The score is 1.00 because the actual output is fully faithful to the retrieval context, with no contradictions found. Every claim in the response aligns with the provided information, so nothing conflicts with the source material. Great work keeping the output grounded!"
+  }
+]
