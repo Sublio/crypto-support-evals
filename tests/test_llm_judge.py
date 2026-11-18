@@ -5,17 +5,17 @@ Run: uv run pytest tests/test_llm_judge.py   (needs Ollama + ANTHROPIC_API_KEY)
 """
 import json
 import os
+from datetime import datetime
 
 os.environ.setdefault("DEEPEVAL_TELEMETRY_OPT_OUT", "YES")
 
 import pytest
-from deepeval import assert_test
 from deepeval.metrics import AnswerRelevancyMetric, FaithfulnessMetric
 from deepeval.test_case import LLMTestCase
 
 from crypto_support_evals.bot import FALLBACK, answer
 from crypto_support_evals.judge import ClaudeJudge
-from crypto_support_evals.run_evals import EVALS_FILE
+from crypto_support_evals.run_evals import EVALS_FILE, RESULTS_DIR
 
 # Starting points; milestone 4 calibrates them against the golden dataset.
 RELEVANCY_THRESHOLD = 0.7
@@ -44,8 +44,18 @@ def judge() -> ClaudeJudge:
     return ClaudeJudge()
 
 
+@pytest.fixture(scope="module")
+def score_log():
+    rows = []
+    yield rows
+    run_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+    out_file = RESULTS_DIR / f"judge-{run_time}.json"
+    out_file.write_text(json.dumps(rows, indent=2), encoding="utf-8")
+    print(f"\nSaved to {out_file}")
+
+
 @pytest.mark.parametrize("case", load_cases())
-def test_answer_is_relevant_and_faithful(case: dict, judge: ClaudeJudge) -> None:
+def test_answer_is_relevant_and_faithful(case: dict, judge: ClaudeJudge,score_log:list) -> None:
     result = answer(case["question"])
     if result["answer"] == FALLBACK:
         pytest.skip("FALLBACK answer: graded exactly by run_evals, nothing for the judge to score")
@@ -55,7 +65,16 @@ def test_answer_is_relevant_and_faithful(case: dict, judge: ClaudeJudge) -> None
         actual_output=result["answer"],
         retrieval_context=result["contexts"],
     )
-    assert_test(test_case, [
-        AnswerRelevancyMetric(threshold=RELEVANCY_THRESHOLD, model=judge),
-        FaithfulnessMetric(threshold=FAITHFULNESS_THRESHOLD, model=judge),
-    ])
+    relevancy = AnswerRelevancyMetric(threshold=RELEVANCY_THRESHOLD, model=judge)
+    faithfulness = FaithfulnessMetric(threshold=FAITHFULNESS_THRESHOLD, model=judge)
+    relevancy.measure(test_case)
+    faithfulness.measure(test_case)
+    row = {"id": case["id"], 
+           "answer": result["answer"],
+           "relevancy": relevancy.score,
+           "relevancy_reason": relevancy.reason,
+           "faithfulness": faithfulness.score,
+           "faithfulness_reason": faithfulness.reason
+           }
+    score_log.append(row)
+    assert relevancy.is_successful() and faithfulness.is_successful(), row

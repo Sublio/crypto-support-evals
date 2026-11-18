@@ -1,0 +1,54 @@
+[
+  {
+    "id": "fee-01",
+    "answer": "BTC can be bought, sold and traded on Orbitra, but BTC cannot be deposited to or withdrawn from Orbitra on-chain."
+  },
+  {
+    "id": "wd-01",
+    "answer": "1 USDT"
+  },
+  {
+    "id": "wd-02",
+    "answer": "0.1 SOL"
+  },
+  {
+    "id": "wd-03",
+    "answer": "A first withdrawal to a new address is held for 24 hours as a security measure."
+  },
+  {
+    "id": "fee-02",
+    "answer": "0.20%"
+  },
+  {
+    "id": "fee-03",
+    "answer": "3.5% of the purchase amount."
+  },
+  {
+    "id": "kyc-01",
+    "answer": "Residence permits are not accepted for Level 1 verification."
+  },
+  {
+    "id": "kyc-02",
+    "answer": "Most verifications are completed in about 10 minutes. If your application needs manual review, it can take up to 3 business days."
+  },
+  {
+    "id": "sec-01",
+    "answer": "48 hours after resetting your password."
+  },
+  {
+    "id": "sec-02",
+    "answer": "It is not legit. Orbitra will never call you and ask for your 2FA code.  Orbitra does not offer phone support and will never call you."
+  },
+  {
+    "id": "pol-01",
+    "answer": "An inactive account is charged a 5 USDT inactivity fee per month, deducted from the account balance."
+  },
+  {
+    "id": "ch-01",
+    "answer": "Staking is not supported.  \nQuote: \"Staking is not supported.\""
+  },
+  {
+    "id": "oos-02",
+    "answer": "Not possible. \"Orbitra does not offer phone support and will never call you.\""
+  }
+]
