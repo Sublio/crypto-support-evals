@@ -10,7 +10,12 @@ from datetime import datetime
 os.environ.setdefault("DEEPEVAL_TELEMETRY_OPT_OUT", "YES")
 
 import pytest
-from deepeval.metrics import AnswerRelevancyMetric, FaithfulnessMetric
+from deepeval.metrics import (
+    AnswerRelevancyMetric,
+    ContextualPrecisionMetric,
+    ContextualRecallMetric,
+    FaithfulnessMetric,
+)
 from deepeval.test_case import LLMTestCase
 
 from crypto_support_evals.bot import FALLBACK, answer
@@ -20,6 +25,8 @@ from crypto_support_evals.run_evals import EVALS_FILE, RESULTS_DIR
 # Starting points; milestone 4 calibrates them against the golden dataset.
 RELEVANCY_THRESHOLD = 0.7
 FAITHFULNESS_THRESHOLD = 0.7
+RECALL_THRESHOLD = 0.7
+PRECISION_THRESHOLD = 0.7
 
 
 def load_cases() -> list:
@@ -64,6 +71,7 @@ def test_answer_is_relevant_and_faithful(case: dict, judge: ClaudeJudge,score_lo
         input=case["question"],
         actual_output=result["answer"],
         retrieval_context=result["contexts"],
+        expected_output=case.get("reference"),
     )
     relevancy = AnswerRelevancyMetric(threshold=RELEVANCY_THRESHOLD, model=judge)
     faithfulness = FaithfulnessMetric(threshold=FAITHFULNESS_THRESHOLD, model=judge)
@@ -76,5 +84,17 @@ def test_answer_is_relevant_and_faithful(case: dict, judge: ClaudeJudge,score_lo
            "faithfulness": faithfulness.score,
            "faithfulness_reason": faithfulness.reason
            }
+    if test_case.expected_output:
+        recall = ContextualRecallMetric(threshold=RECALL_THRESHOLD, model=judge)
+        precision = ContextualPrecisionMetric(threshold=PRECISION_THRESHOLD, model=judge)
+        recall.measure(test_case)
+        precision.measure(test_case)
+        row["recall"] = recall.score
+        row["recall_reason"] = recall.reason
+        row["precision"] = precision.score
+        row["precision_reason"] = precision.reason
     score_log.append(row)
-    assert relevancy.is_successful() and faithfulness.is_successful(), row
+    metrics = [relevancy, faithfulness]
+    if test_case.expected_output:
+        metrics += [recall, precision]
+    assert all(m.is_successful() for m in metrics), row
