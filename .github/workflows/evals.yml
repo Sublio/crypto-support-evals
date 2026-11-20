@@ -41,6 +41,11 @@ jobs:
       - name: Run evals
         run: uv run python -m crypto_support_evals.run_evals
 
+      - name: Run LLM judge
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: uv run pytest tests/test_llm_judge.py -v -rxXs
+
       - name: Upload run result
         if: always()
         uses: actions/upload-artifact@v4
